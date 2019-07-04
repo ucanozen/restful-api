@@ -1,0 +1,23 @@
+{
+  "name": "restful-api",
+  "version": "1.0.0",
+  "description": "Creating a RESTful API following Academind tutorial on YouTube",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ucanozen/restful-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ucanozen/restful-api/issues"
+  },
+  "homepage": "https://github.com/ucanozen/restful-api#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
