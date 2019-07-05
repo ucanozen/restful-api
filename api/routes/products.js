@@ -3,10 +3,29 @@ const router = express.Router();
 
 const Product = require('../models/product');
 
-router.get('/', (req, res, next) => {
-  res.status(200).json({
-    message: 'Handling GET requests /products'
-  });
+router.get('/', async (req, res, next) => {
+  try {
+    const products = await Product.find();
+    console.log(products);
+    const response = {
+      count: products.length,
+      products: products.map(product => {
+        return {
+          id: product._id,
+          name: product.name,
+          price: product.price,
+          request: {
+            type: 'GET',
+            url: 'http://localhost:3000/products/' + product._id
+          }
+        };
+      })
+    };
+    res.status(201).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
 });
 
 router.post('/', async (req, res, next) => {
@@ -15,11 +34,19 @@ router.post('/', async (req, res, next) => {
     price: req.body.price
   });
   try {
-    const result = await product.save();
-    console.log(result);
+    const response = await product.save();
+    console.log(response);
     res.status(201).json({
-      message: 'Handling POST requests /products',
-      createdProduct: result
+      message: 'Created a new product',
+      createdProduct: {
+        id: response._id,
+        name: response.name,
+        price: response.price,
+        request: {
+          type: 'GET',
+          url: 'http://localhost:3000/products/' + response._id
+        }
+      }
     });
   } catch (error) {
     console.log(error);
@@ -31,9 +58,18 @@ router.get('/:productId', async (req, res, next) => {
   const productId = req.params.productId;
 
   try {
-    const product = await Product.findById(productId);
-    console.log(product);
-    if (product) {
+    const response = await Product.findById(productId).lean();
+    console.log(response);
+    if (response) {
+      const product = {
+        id: response._id,
+        name: response.name,
+        price: response.price,
+        request: {
+          type: 'GET',
+          url: 'http://localhost:3000/products/'
+        }
+      };
       return res.status(200).json(product);
     }
     res.status(404).json({ message: 'No product was found with that ID' });
