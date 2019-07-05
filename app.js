@@ -1,11 +1,19 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const app = express();
 
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+
+mongoose.connect(
+  'mongodb+srv://ucanozen:' +
+    process.env.MONGO_ATLAS_PWD +
+    '@node-rest-shop-1bqqz.mongodb.net/test?retryWrites=true&w=majority',
+  { useNewUrlParser: true }
+);
 
 app.use(morgan('dev'));
 
