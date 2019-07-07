@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const checkAuth = require('../middleware/check-auth');
 const Product = require('../models/product');
 
 const router = express.Router();
@@ -47,34 +48,39 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.post('/', upload.single('productImage'), async (req, res, next) => {
-  console.log(req.file);
-  const product = new Product({
-    name: req.body.name,
-    price: req.body.price,
-    productImage: req.file.path
-  });
-  try {
-    const response = await product.save();
-    console.log(response);
-    res.status(201).json({
-      message: 'Created a new product',
-      createdProduct: {
-        id: response._id,
-        name: response.name,
-        price: response.price,
-        productImage: response.productImage,
-        request: {
-          type: 'GET',
-          url: 'http://localhost:3000/products/' + response._id
-        }
-      }
+router.post(
+  '/',
+  checkAuth,
+  upload.single('productImage'),
+  async (req, res, next) => {
+    console.log(req.body);
+    const product = new Product({
+      name: req.body.name,
+      price: req.body.price,
+      productImage: req.file.path
     });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: error });
+    try {
+      const response = await product.save();
+      console.log(response);
+      res.status(201).json({
+        message: 'Created a new product',
+        createdProduct: {
+          id: response._id,
+          name: response.name,
+          price: response.price,
+          productImage: response.productImage,
+          request: {
+            type: 'GET',
+            url: 'http://localhost:3000/products/' + response._id
+          }
+        }
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: error });
+    }
   }
-});
+);
 
 router.get('/:productId', async (req, res, next) => {
   const productId = req.params.productId;
@@ -100,7 +106,7 @@ router.get('/:productId', async (req, res, next) => {
     res.status(500).json({ error: error });
   }
 });
-router.patch('/:productId', async (req, res, next) => {
+router.patch('/:productId', checkAuth, async (req, res, next) => {
   console.log('Patch');
   console.log(req.body);
   const productId = req.params.productId;
@@ -122,7 +128,7 @@ router.patch('/:productId', async (req, res, next) => {
     res.status(500).json({ error: error });
   }
 });
-router.delete('/:productId', async (req, res, next) => {
+router.delete('/:productId', checkAuth, async (req, res, next) => {
   const productId = req.params.productId;
 
   try {

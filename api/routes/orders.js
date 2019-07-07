@@ -1,10 +1,12 @@
 const express = require('express');
 const Order = require('../models/order');
+const checkAuth = require('../middleware/check-auth');
+
 const Product = require('../models/product');
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/', checkAuth, async (req, res, next) => {
   try {
     const orders = await Order.find();
     const response = {
@@ -34,7 +36,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkAuth, async (req, res, next) => {
   const order = new Order({
     quantity: req.body.quantity,
     productId: req.body.productId
@@ -67,7 +69,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.get('/:orderId', async (req, res, next) => {
+router.get('/:orderId', checkAuth, async (req, res, next) => {
   const orderId = req.params.orderId;
   try {
     const response = await Order.findById(orderId).lean();
@@ -96,7 +98,7 @@ router.get('/:orderId', async (req, res, next) => {
   }
 });
 
-router.patch('/:orderId', async (req, res, next) => {
+router.patch('/:orderId', checkAuth, async (req, res, next) => {
   const orderId = req.params.orderId;
   const update = req.body;
   const options = { new: true };
@@ -117,7 +119,7 @@ router.patch('/:orderId', async (req, res, next) => {
   }
 });
 
-router.delete('/:orderId', async (req, res, next) => {
+router.delete('/:orderId', checkAuth, async (req, res, next) => {
   const orderId = req.params.orderId;
   try {
     const deletedOrder = await Product.findByIdAndDelete(orderId);

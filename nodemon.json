@@ -1,5 +1,6 @@
 {
   "env": {
-    "MONGO_ATLAS_PWD": "ucanATnode"
+    "MONGO_ATLAS_PWD": "ucanATnode",
+    "JWT_KEY": "sectret key"
   }
 }
